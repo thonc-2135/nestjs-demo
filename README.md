@@ -15,8 +15,8 @@ API tuân theo spec: https://realworld-docs.netlify.app/specifications/backend/e
 ## Stack
 
 - [NestJS](https://nestjs.com) 12
-- TypeORM + PostgreSQL
-- JWT (`@nestjs/jwt`, `passport-jwt`)
+- TypeORM + PostgreSQL (migration viết tay, không synchronize)
+- JWT (`@nestjs/jwt`, `passport-jwt`) + Redis (blacklist token khi logout)
 - class-validator / class-transformer
 - nestjs-i18n (en/vi)
 - @nestjs/swagger (`/api/docs`)
@@ -26,6 +26,7 @@ API tuân theo spec: https://realworld-docs.netlify.app/specifications/backend/e
 - Node.js >= 24
 - pnpm >= 11
 - PostgreSQL 16
+- Redis
 
 ## Cài đặt
 
@@ -46,6 +47,22 @@ createdb -O postgres nestjs_demo
 ```
 
 Hoặc `docker compose up -d` (`docker-compose.yml`) nếu máy dùng Docker/Colima.
+
+### Redis
+
+```bash
+brew install redis
+brew services start redis
+```
+
+### Migration
+
+```bash
+pnpm migration:add src/database/migrations/<TenMigration>  # tạo file rỗng, tự viết SQL
+pnpm migration:apply                                        # chạy migration chưa apply
+pnpm migration:revert                                       # revert migration gần nhất
+pnpm migration:reset                                         # drop toàn bộ schema + apply lại từ đầu
+```
 
 ## Chạy dự án
 

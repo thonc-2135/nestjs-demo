@@ -1,15 +1,9 @@
-import type { ConfigService } from '@nestjs/config';
 import type { TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { buildDataSourceOptions } from '../database/data-source-options.js';
 
-export function typeOrmConfig(configService: ConfigService): TypeOrmModuleOptions {
+export function typeOrmConfig(): TypeOrmModuleOptions {
   return {
-    type: 'postgres',
-    host: configService.get<string>('DB_HOST', 'localhost'),
-    port: configService.get<number>('DB_PORT', 5432),
-    username: configService.get<string>('DB_USERNAME', 'postgres'),
-    password: configService.get<string>('DB_PASSWORD', 'postgres'),
-    database: configService.get<string>('DB_NAME', 'nestjs_demo'),
+    ...buildDataSourceOptions(process.env),
     autoLoadEntities: true,
-    synchronize: false,
   };
 }
