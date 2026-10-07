@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import * as bcrypt from 'bcrypt';
+import { comparePassword, hashPassword } from '../common/utils/password.util.js';
 import { RedisService } from '../redis/redis.service.js';
 import type { User } from '../users/entities/user.entity.js';
 import { toUserResponse, type UserResponse } from '../users/mappers/user-response.mapper.js';
@@ -9,8 +9,6 @@ import { UsersService } from '../users/users.service.js';
 import type { LoginDto } from './dto/login.dto.js';
 import type { RegisterDto } from './dto/register.dto.js';
 import type { JwtPayload } from './interfaces/jwt-payload.interface.js';
-
-const SALT_ROUNDS = 10;
 
 @Injectable()
 export class AuthService {
@@ -35,7 +33,7 @@ export class AuthService {
       throw new UnprocessableEntityException(errors);
     }
 
-    const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
+    const hashedPassword = await hashPassword(password);
     const user = await this.usersService.create({
       email,
       username,
@@ -48,7 +46,7 @@ export class AuthService {
   async login(dto: LoginDto): Promise<UserResponse> {
     const { email, password } = dto.user;
     const user = await this.usersService.findByEmail(email);
-    const passwordMatches = user ? await bcrypt.compare(password, user.password) : false;
+    const passwordMatches = user ? await comparePassword(password, user.password) : false;
 
     if (!user || !passwordMatches) {
       throw new UnprocessableEntityException({ 'email or password': ['is invalid'] });

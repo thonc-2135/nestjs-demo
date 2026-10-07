@@ -72,6 +72,8 @@ pnpm start:dev
 
 API sẽ chạy tại `http://localhost:3000/api`, Swagger UI tại `http://localhost:3000/api/docs`.
 
+Avatar upload (`POST /api/user/avatar`) lưu file vào `public/uploads/avatars/`, serve tĩnh qua `/public/...`.
+
 ## Test
 
 ```bash

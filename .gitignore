@@ -19,6 +19,11 @@ pnpm-debug.log*
 # coverage
 /coverage
 
+# user-uploaded files
+/public/uploads/**
+!/public/uploads/**/
+!/public/uploads/**/.gitkeep
+
 # OS
 .DS_Store
 
