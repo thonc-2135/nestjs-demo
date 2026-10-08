@@ -10,7 +10,6 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { AttachmentsService } from '../attachments/attachments.service.js';
 import { CurrentToken } from '../auth/decorators/current-token.decorator.js';
 import { CurrentUser } from '../auth/decorators/current-user.decorator.js';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
@@ -25,10 +24,7 @@ import { UsersService } from './users.service.js';
 @UseGuards(JwtAuthGuard)
 @Controller('user')
 export class UsersController {
-  constructor(
-    private readonly usersService: UsersService,
-    private readonly attachmentsService: AttachmentsService,
-  ) {}
+  constructor(private readonly usersService: UsersService) {}
 
   @Get()
   @ApiOperation({ summary: 'Get current user' })
@@ -67,18 +63,7 @@ export class UsersController {
     @CurrentToken() token: string,
     @UploadedFile() file: Express.Multer.File,
   ): Promise<UserResponse> {
-    const url = `/public/uploads/avatars/${file.filename}`;
-
-    await this.attachmentsService.create({
-      attachableType: 'user_avatar',
-      attachableId: user.id,
-      url,
-      fileName: file.filename,
-      fileType: file.mimetype,
-      fileSize: file.size,
-    });
-
-    const updated = await this.usersService.updateProfile(user, { image: url });
+    const updated = await this.usersService.updateAvatar(user, file);
     return toUserResponse(updated, token);
   }
 }

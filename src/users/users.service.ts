@@ -1,22 +1,17 @@
 import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { AttachmentsService } from '../attachments/attachments.service.js';
 import { hashPassword } from '../common/utils/password.util.js';
 import { User } from './entities/user.entity.js';
-
-export interface UpdateProfileData {
-  email?: string;
-  username?: string;
-  password?: string;
-  bio?: string;
-  image?: string;
-}
+import type { UpdateProfileData } from './interfaces/update-profile-data.interface.js';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
+    private readonly attachmentsService: AttachmentsService,
   ) {}
 
   findById(id: string): Promise<User | null> {
@@ -72,5 +67,20 @@ export class UsersService {
     }
 
     return this.usersRepository.save(user);
+  }
+
+  async updateAvatar(user: User, file: Express.Multer.File): Promise<User> {
+    const url = `/public/uploads/avatars/${file.filename}`;
+
+    await this.attachmentsService.create({
+      attachableType: 'user_avatar',
+      attachableId: user.id,
+      url,
+      fileName: file.filename,
+      fileType: file.mimetype,
+      fileSize: file.size,
+    });
+
+    return this.updateProfile(user, { image: url });
   }
 }

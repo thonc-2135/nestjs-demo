@@ -2,15 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Attachment } from './entities/attachment.entity.js';
-
-export interface CreateAttachmentData {
-  attachableType: string;
-  attachableId: string;
-  url: string;
-  fileName: string;
-  fileType: string;
-  fileSize: number;
-}
+import type { CreateAttachmentData } from './interfaces/create-attachment-data.interface.js';
 
 @Injectable()
 export class AttachmentsService {
