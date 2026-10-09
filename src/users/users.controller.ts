@@ -42,8 +42,7 @@ export class UsersController {
     @CurrentToken() token: string,
     @Body() dto: UpdateUserDto,
   ): Promise<UserResponse> {
-    const updated = await this.usersService.updateProfile(user, dto.user);
-    return toUserResponse(updated, token);
+    return await this.usersService.updateProfile(user, dto.user, token);
   }
 
   @Post('avatar')
@@ -63,7 +62,6 @@ export class UsersController {
     @CurrentToken() token: string,
     @UploadedFile() file: Express.Multer.File,
   ): Promise<UserResponse> {
-    const updated = await this.usersService.updateAvatar(user, file);
-    return toUserResponse(updated, token);
+    return await this.usersService.updateAvatar(user, file, token);
   }
 }

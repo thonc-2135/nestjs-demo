@@ -5,6 +5,7 @@ import { AttachmentsService } from '../attachments/attachments.service.js';
 import { hashPassword } from '../common/utils/password.util.js';
 import { User } from './entities/user.entity.js';
 import type { UpdateProfileData } from './interfaces/update-profile-data.interface.js';
+import { toUserResponse, type UserResponse } from './mappers/user-response.mapper.js';
 
 @Injectable()
 export class UsersService {
@@ -39,7 +40,11 @@ export class UsersService {
     return this.usersRepository.save(user);
   }
 
-  async updateProfile(user: User, data: UpdateProfileData): Promise<User> {
+  async updateProfile(
+    user: User,
+    data: UpdateProfileData,
+    token: string,
+  ): Promise<UserResponse> {
     if (data.email !== undefined && data.email !== user.email) {
       if (await this.findByEmail(data.email)) {
         throw new UnprocessableEntityException({ email: ['has already been taken'] });
@@ -66,10 +71,15 @@ export class UsersService {
       user.image = data.image;
     }
 
-    return this.usersRepository.save(user);
+    const saved = await this.usersRepository.save(user);
+    return toUserResponse(saved, token);
   }
 
-  async updateAvatar(user: User, file: Express.Multer.File): Promise<User> {
+  async updateAvatar(
+    user: User,
+    file: Express.Multer.File,
+    token: string,
+  ): Promise<UserResponse> {
     const url = `/public/uploads/avatars/${file.filename}`;
 
     await this.attachmentsService.create({
@@ -81,6 +91,6 @@ export class UsersService {
       fileSize: file.size,
     });
 
-    return this.updateProfile(user, { image: url });
+    return this.updateProfile(user, { image: url }, token);
   }
 }
