@@ -10,6 +10,7 @@ import {
 } from 'nestjs-i18n';
 import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
+import { ArticlesModule } from './articles/articles.module.js';
 import { AuthModule } from './auth/auth.module.js';
 import { typeOrmConfig } from './config/typeorm.config.js';
 import { ProfilesModule } from './profiles/profiles.module.js';
@@ -39,6 +40,7 @@ const currentDir = dirname(fileURLToPath(import.meta.url));
     UsersModule,
     AuthModule,
     ProfilesModule,
+    ArticlesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
