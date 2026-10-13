@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import type { User } from '../users/entities/user.entity.js';
 import { UsersService } from '../users/users.service.js';
 import { Follow } from './entities/follow.entity.js';
@@ -59,5 +59,22 @@ export class ProfilesService {
       where: { followerId, followingId },
     });
     return count > 0;
+  }
+
+  async getFollowingSet(followerId: string, followingIds: string[]): Promise<Set<string>> {
+    if (followingIds.length === 0) return new Set();
+    const rows = await this.followsRepository.find({
+      where: { followerId, followingId: In(followingIds) },
+      select: { followingId: true },
+    });
+    return new Set(rows.map((row) => row.followingId));
+  }
+
+  async getFollowingIds(followerId: string): Promise<string[]> {
+    const rows = await this.followsRepository.find({
+      where: { followerId },
+      select: { followingId: true },
+    });
+    return rows.map((row) => row.followingId);
   }
 }
