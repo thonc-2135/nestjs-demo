@@ -12,6 +12,7 @@ import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
 import { ArticlesModule } from './articles/articles.module.js';
 import { AuthModule } from './auth/auth.module.js';
+import { CommentsModule } from './comments/comments.module.js';
 import { typeOrmConfig } from './config/typeorm.config.js';
 import { ProfilesModule } from './profiles/profiles.module.js';
 import { RedisModule } from './redis/redis.module.js';
@@ -41,6 +42,7 @@ const currentDir = dirname(fileURLToPath(import.meta.url));
     AuthModule,
     ProfilesModule,
     ArticlesModule,
+    CommentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
