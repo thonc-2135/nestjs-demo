@@ -145,7 +145,7 @@ export class ArticlesService {
     return { articles: data, articlesCount };
   }
 
-  private async findBySlugOrFail(slug: string): Promise<Article> {
+  async findBySlugOrFail(slug: string): Promise<Article> {
     const article = await this.articlesRepository.findOne({
       where: { slug },
       relations: { author: true, tags: true },

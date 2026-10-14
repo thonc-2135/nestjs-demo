@@ -12,5 +12,6 @@ import { TagsController } from './tags.controller.js';
   imports: [TypeOrmModule.forFeature([Article, Tag, Favorite]), ProfilesModule],
   controllers: [ArticlesController, TagsController],
   providers: [ArticlesService],
+  exports: [ArticlesService],
 })
 export class ArticlesModule {}
